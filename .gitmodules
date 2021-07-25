@@ -1,0 +1,3 @@
+[submodule "digital-garden"]
+	path = digital-garden
+	url = git@github.com:stephencweiss/digital-garden.git
