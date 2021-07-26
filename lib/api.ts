@@ -58,6 +58,7 @@ export function getAllPublicPosts(fields: string[] = []) {
         !post.private &&
         !post.archive &&
         post.stage !== "draft" &&
-        post.stage !== "archived"
+        post.stage !== "archived" &&
+        Object.keys(post).length
     )
 }
