@@ -1,1 +1,1 @@
-export const POSTS_DIRECTORY = "digital-garden/notes";
+export const POSTS_DIRECTORY = "_posts/notes"; // where are the actual notes?

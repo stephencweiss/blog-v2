@@ -13,43 +13,51 @@ export function getPosts() {
 }
 
 export function getPostByFilePath(filePath: string, fields: string[] = []) {
+  type Items = {
+    [key: string]: string;
+  };
   const fullPath = join(postsDirectory, filePath);
-  try {
-    const fileContents = fs.readFileSync(fullPath, "utf8");
+  const fileContents = fs.readFileSync(fullPath, "utf8");
 
-    const { data, content } = matter(fileContents);
+  const { data, content } = matter(fileContents);
+  const items: Items = {};
 
-    type Items = {
-      [key: string]: string;
-    };
+  // Ensure only the minimal needed data is exposed
+  fields.forEach((field) => {
+    if (data[field]) {
+      items[field] = data[field];
+    }
 
-    const items: Items = {};
+    if (field === "content") {
+      items[field] = content;
+    }
 
-    // Ensure only the minimal needed data is exposed
-    fields.forEach((field) => {
-      if (field === "slug") {
-        items[field] = filePath;
-      }
-      if (field === "content") {
-        items[field] = content;
-      }
+    // make sure that date fields are strings
+    if (data[field] instanceof Date) {
+      items[field] = data[field].toISOString();
+    }
+  });
 
-      if (data[field]) {
-        items[field] = data[field];
-      }
-    });
-
-    return items;
-  } catch (error) {
-    console.log(`ERROR -- couldn't get ${fullPath}\n`, { error });
-  }
+  return items;
 }
 
 export function getAllPosts(fields: string[] = []) {
   const slugs = getPosts();
 
-  const posts = slugs.map((slug) => getPostByFilePath(slug, fields));
-  // sort posts by date in descending order
-  //   .sort((post1, post2) => (post1.date > post2.date ? -1 : 1));
+  const posts = slugs
+    .map((slug) => getPostByFilePath(slug, fields))
+    // sort posts by date in descending order
+    .sort((post1: any, post2: any) => (post1.date > post2.date ? -1 : 1));
   return posts;
+}
+
+export function getAllPublicPosts(fields: string[] = []) {
+  return getAllPosts(["private", "archive", "stage", ...fields])
+    .filter(
+      (post) =>
+        !post.private &&
+        !post.archive &&
+        post.stage !== "draft" &&
+        post.stage !== "archived"
+    )
 }

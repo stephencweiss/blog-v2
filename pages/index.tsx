@@ -2,16 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
-import { getAllPosts } from "../lib/api";
-
-type Post = any;
-
-type Props = {
-  allPosts: Post[];
-};
-
-export default function Home({ allPosts }: Props) {
-  // console.log({ allPosts });
+export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
@@ -77,20 +68,4 @@ export default function Home({ allPosts }: Props) {
   );
 }
 
-export const getStaticProps = async () => {
-  const allPosts = getAllPosts([
-    "title",
-    "date",
-    "slug",
-    "published",
-    "private",
-    "tags",
-    "category",
-    "stage",
-    "author",
-    "coverImage",
-    "excerpt",
-  ]);
-  console.log(allPosts);
-  return { props: { allPosts: {} } };
-};
+
